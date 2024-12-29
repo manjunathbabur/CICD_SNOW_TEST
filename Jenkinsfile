@@ -39,6 +39,7 @@ pipeline {
                 -w %SNOWSQL_WAREHOUSE% ^
                 -d %SNOWSQL_DATABASE% ^
                 -s %SNOWSQL_SCHEMA% ^
+                -o log_dir="C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\DEV_SNOWSQL\\logs" ^
                 -f scripts\\create_table.sql
                 """
             }
