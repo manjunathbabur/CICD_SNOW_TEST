@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 // Clone the repository containing SQL scripts
-                git branch: 'main', url: 'https://github.com/your-repo/your-sql-project.git'
+                git branch: 'main', url: 'https://github.com/manjunathbabur/CICD_SNOW_TEST.git'
             }
         }
 
