@@ -23,7 +23,7 @@ pipeline {
                     def sqlFiles = findFiles(glob: 'scripts/*.sql')
                     for (file in sqlFiles) {
                         sh """
-                        "C:/Program Files/Snowflake SnowSQL" \
+                        "C:/Program Files/Snowflake SnowSQL/snowsql" \
                         -a $SNOWSQL_ACCOUNT \
                         -u $SNOWSQL_USER \
                         -w $SNOWSQL_WAREHOUSE \
