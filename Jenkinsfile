@@ -2,51 +2,59 @@ pipeline {
     agent any
 
     environment {
-        SNOWSQL_USER = 'MRAJAMANI'
-        SNOWSQL_PASSWORD = credentials('SNOWFLAKE_PASSWORD')
+        // Snowflake configuration
         SNOWSQL_ACCOUNT = 'mg05545.eu-west-1'
+        SNOWSQL_USER = 'MRAJAMANI'
         SNOWSQL_WAREHOUSE = 'POC_ITIM_PERIASAMY'
         SNOWSQL_DATABASE = 'POC_CICD_PY'
         SNOWSQL_SCHEMA = 'PUBLIC'
+        // Path to SnowSQL executable
+        SNOWSQL_PATH = '"C:\\Program Files\\SnowSQL\\snowsql.exe"'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/manjunathbabur/CICD_SNOW_TEST.git'
+                // Clone the repository containing SQL scripts
+                git branch: 'main', url: 'https://github.com/your-repo/your-sql-project.git'
             }
         }
 
-        stage('Deploy SQL Scripts') {
+        stage('Verify Environment') {
             steps {
-                script {
-                    def sqlFiles = findFiles(glob: 'scripts/*.sql')
-                    for (file in sqlFiles) {
-                        sh """
-                        "C:/Program Files/SnowSQL" \
-                         snowsql \
-                        -a $SNOWSQL_ACCOUNT \
-                        -u $SNOWSQL_USER \
-                        -w $SNOWSQL_WAREHOUSE \
-                        -d $SNOWSQL_DATABASE \
-                        -s $SNOWSQL_SCHEMA \
-                        -f ${file.path}
-                        """
-                    }
-                }
+                // Debugging steps to check environment and paths
+                bat "echo SNOWSQL PATH: %SNOWSQL_PATH%"
+                bat "echo Current PATH: %PATH%"
+                bat "dir"
+            }
+        }
+
+        stage('Run SnowSQL Scripts') {
+            steps {
+                // Execute SnowSQL to run the SQL script
+                bat """
+                %SNOWSQL_PATH% ^
+                -a %SNOWSQL_ACCOUNT% ^
+                -u %SNOWSQL_USER% ^
+                -w %SNOWSQL_WAREHOUSE% ^
+                -d %SNOWSQL_DATABASE% ^
+                -s %SNOWSQL_SCHEMA% ^
+                -f scripts\\create_table.sql
+                """
             }
         }
 
         stage('Validation') {
             steps {
-                sh """
-                snowsql \
-                -a $SNOWSQL_ACCOUNT \
-                -u $SNOWSQL_USER \
-                -w $SNOWSQL_WAREHOUSE \
-                -d $SNOWSQL_DATABASE \
-                -s $SNOWSQL_SCHEMA \
-                -q "SELECT COUNT(*) AS RECORD_COUNT FROM MY_DATABASE.MY_SCHEMA.MY_TABLE;"
+                // Validation step to query Snowflake
+                bat """
+                %SNOWSQL_PATH% ^
+                -a %SNOWSQL_ACCOUNT% ^
+                -u %SNOWSQL_USER% ^
+                -w %SNOWSQL_WAREHOUSE% ^
+                -d %SNOWSQL_DATABASE% ^
+                -s %SNOWSQL_SCHEMA% ^
+                -q "SELECT COUNT(*) FROM MY_TABLE;"
                 """
             }
         }
@@ -57,7 +65,7 @@ pipeline {
             echo 'Deployment and validation succeeded!'
         }
         failure {
-            echo 'Deployment failed!'
+            echo 'Deployment failed! Check the logs for details.'
         }
     }
 }
