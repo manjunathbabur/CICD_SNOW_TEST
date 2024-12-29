@@ -9,7 +9,7 @@ pipeline {
         SNOWSQL_DATABASE = 'POC_CICD_PY'
         SNOWSQL_SCHEMA = 'PUBLIC'
         // Path to SnowSQL executable
-        SNOWSQL_PATH = '"C:\\Program Files\\SnowSQL\\snowsql.exe"'
+        SNOWSQL_PATH = '"C:\\Program Files\\SnowSQL\\"'
     }
 
     stages {
@@ -34,6 +34,7 @@ pipeline {
                 // Execute SnowSQL to run the SQL script
                 bat """
                 %SNOWSQL_PATH% ^
+                  snowsql ^
                 -a %SNOWSQL_ACCOUNT% ^
                 -u %SNOWSQL_USER% ^
                 -w %SNOWSQL_WAREHOUSE% ^
@@ -50,6 +51,7 @@ pipeline {
                 // Validation step to query Snowflake
                 bat """
                 %SNOWSQL_PATH% ^
+                snowsql ^
                 -a %SNOWSQL_ACCOUNT% ^
                 -u %SNOWSQL_USER% ^
                 -w %SNOWSQL_WAREHOUSE% ^
